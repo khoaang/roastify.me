@@ -6,6 +6,9 @@ body {
     padding: 0;
     overflow-x: hidden;
 }
+* {
+    touch-action: manipulation;
+}
 
 #chat-container {
     display: flex;
@@ -77,4 +80,32 @@ body {
 
 #send-button:hover {
     background-color: #1aa34a; /* Slightly darker green on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    #chat-container {
+        margin: 0;
+        border-radius: 0; /* Remove border radius for a more compact look */
+    }
+
+    #chat-messages {
+        max-height: 70vh; /* Adjusted height for smaller screens */
+    }
+
+    .message {
+        max-width: 80%; /* Slightly wider messages for better readability */
+    }
+
+    #chat-input {
+        margin-top: 5px; /* Reduced margin for a more compact input area */
+    }
+
+    #user-input {
+        padding: 10px 14px; /* Smaller padding for input area */
+    }
+
+    #send-button {
+        padding: 8px 16px; /* Smaller padding for send button */
+    }
 }
