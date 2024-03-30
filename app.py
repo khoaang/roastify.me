@@ -163,8 +163,7 @@ def send_message():
 
 @app.route('/tracks')
 def tracks():
-    global track_names
-    return jsonify(track_names)
+    return jsonify(session['track_names'])
 
 
 @app.route('/get_song_embed', methods=['POST'])
