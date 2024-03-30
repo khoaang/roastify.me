@@ -7,7 +7,7 @@ from urllib.parse import quote
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Use a secure secret key
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 client = OpenAI()
 # Spotify OAuth settings
