@@ -3,7 +3,7 @@ var typed = new Typed("#user-input", {
     "what have i been listening to?",
     "what's my favorite song? what are some recs you can give?",
     "is my taste trash?",
-    "",
+    "what's the best song ever?",
   ],
   typeSpeed: 30,
   loop: true,
