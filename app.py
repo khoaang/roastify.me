@@ -51,7 +51,9 @@ def filter_json(json_data):
 
 def fetch_user_data():
     access_token = session['access_token']  # Get access token from the session
-
+    if access_token is None:
+        session.clear()
+        return redirect(url_for('index'))
     headers = {
         'Authorization': f'Bearer {access_token}',
     }
