@@ -4,33 +4,43 @@ from openai import OpenAI
 import os
 import json
 from urllib.parse import quote
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Use a secure secret key
 
 client = OpenAI()
 # Spotify OAuth settings
-CLIENT_ID = 'ccb7c5e0b3404e7d9e647351dc7e73da'
-CLIENT_SECRET = 'bca706a8befd428ca2efcdea35617161'
-REDIRECT_URI = 'https://roastify-e5f31d0b56b2.herokuapp.com/callback'
+
+load_dotenv()
+
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+REDIRECT_URI = os.getenv('REDIRECT_URI')
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
+track_names = []
+
 
 def filter_json(json_data):
+    global track_names
     filtered_data = {}
     # Add only necessary fields to the new dictionary
     filtered_data['items'] = []
     for item in json_data['items']:
         if 'name' not in item:
             filtered_item = {}
+            track_names.append((item['track']['name'], item['track']['id']))
             filtered_item['name'] = item['track']['name']
             filtered_item['artists'] = ", ".join(
                 [artist['name'] for artist in item['track']['artists']])
             filtered_item['popularity'] = item['track']['popularity']
+            filtered_data['items'].append(filtered_item)
             continue
         filtered_item = {}
         filtered_item['name'] = item['name']
+        track_names.append((item['name'], item['id']))
         filtered_item['artists'] = ", ".join(
             [artist['name'] for artist in item['artists']])
         filtered_item['popularity'] = item['popularity']
@@ -58,10 +68,6 @@ def fetch_user_data():
     # Fetch user's recently played tracks
     recently_played_response = requests.get(
         'https://api.spotify.com/v1/me/player/recently-played?limit=20', headers=headers)
-
-    print('\n\n\n\n\n\n\n\n\n\n\n\n')
-    print(recently_played_response.json())
-    print('\n\n\n\n\n\n\n\n\n\n\n\n')
     recently_played = filter_json(recently_played_response.json())
 
     # Format the data into a string
@@ -77,8 +83,12 @@ def fetch_user_data():
     return user_data
 
 
+init_user_data = None
+
+
 @app.route('/')
 def index():
+    session.pop('previous_messages', None)
     if 'access_token' in session:
         return render_template('chat.html')
     return render_template('index.html')
@@ -119,6 +129,9 @@ def callback():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
+    global init_user_data
+    if init_user_data is None:
+        init_user_data = fetch_user_data()
     message = request.json.get('message')
 
     # Get the previous messages from the session
@@ -131,8 +144,8 @@ def send_message():
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are here to review the user's music taste, but you are grumpy and harsh. You answer responses one thing at a time, brief and sharp, and are informal with text message responses that use aave and informal grammar, oftentimes not even capitalizing. provide examples and review tracks so you can make the user feel bad."},
-            {"role": "assistant", "content": fetch_user_data()},
+            {"role": "system", "content": "You are here to review the user's music taste, but you are grumpy and harsh. You answer responses one thing at a time, brief and sharp and snarky with puns, and are informal with text message responses that use aave and informal grammar, oftentimes not even capitalizing. provide examples and review tracks so you can make the user feel bad. you are slightly inclined towards more meaningful, message driven, soulful songs and lyrical rap. never end the conversation"},
+            {"role": "assistant", "content": init_user_data},
             *previous_messages,
         ],
         max_tokens=100
@@ -147,6 +160,71 @@ def send_message():
 
     session['previous_messages'] = previous_messages
     return jsonify(response=response.choices[0].message.content)
+
+
+@app.route('/tracks')
+def tracks():
+    global track_names
+    return jsonify(track_names)
+
+
+@app.route('/get_song_embed', methods=['POST'])
+def get_song_embed():
+    data = request.json
+    message = data.get('message')
+    if not message:
+        return jsonify({'song_embed_url': None})
+
+    song_artist_pairs = identify_song_titles_and_artists(message)
+    print(song_artist_pairs)
+    if song_artist_pairs == []:
+        return jsonify({'song_embed_url': None})
+    song_title, artist = song_artist_pairs[0]
+    song_title = song_title.strip()
+    artist = artist.strip()
+
+    # Check if the song title is in track_names
+    for track in track_names:
+        if track[0].lower() == song_title.lower():
+            return jsonify({'song_embed_url': f'https://open.spotify.com/embed/track/{track[1]}'})
+
+    headers = {'Authorization': 'Bearer ' + session['access_token']}
+    params = {'q': f'track:{song_title} artist:{
+        artist}', 'type': 'track', 'limit': 1}
+    response = requests.get(
+        'https://api.spotify.com/v1/search', headers=headers, params=params)
+    response.raise_for_status()
+    tracks = response.json()['tracks']['items']
+    if tracks:
+        song_id = tracks[0]['id']
+        return jsonify({'song_embed_url': f'https://open.spotify.com/embed/track/{song_id}'})
+    else:
+        return jsonify({'song_embed_url': None})
+
+
+def identify_song_titles_and_artists(message):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system",
+                "content": "You are a helpful assistant. What song titles and their artists are mentioned in this text? Be concise and clear, list the first song title and artists. Split by commas for songs, like 'Song by Artist, Song2 by Artist2' ignore features If there are no songs, just try you best."},
+            {"role": "user", "content": message},
+        ],
+        max_tokens=100
+    )
+    print(response.choices[0].message.content)
+    song_artist_pairs = response.choices[0].message.content.split(',')
+    song_artist_pairs = [(pair.split(' by ')[0].strip(), ' by '.join(pair.split(
+        ' by ')[1:]).strip()) for pair in song_artist_pairs if ' by ' in pair]
+    return song_artist_pairs
+
+# sign out route that clears the session
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

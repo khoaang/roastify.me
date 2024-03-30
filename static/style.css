@@ -9,6 +9,16 @@ body {
 * {
     touch-action: manipulation;
 }
+h1 {
+    text-align: center;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0;
+    color: #ddd;
+}
 
 #chat-container {
     display: flex;
@@ -51,13 +61,27 @@ body {
     align-self: flex-start;
     background-color: #535353; /* Slightly lighter grey for server messages */
 }
-
+.song-embed {
+    border: none;
+}
 #chat-input {
     display: flex;
     align-items: center;
     margin-top: 10px; /* Adds space between chat messages and input area */
 }
 
+#logout {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 12px 16px;
+    border-radius: 30px;
+    border: 2px solid #333;
+    background-color: #181818;
+    color: #ddd;
+    cursor: pointer;
+    text-decoration: none;
+}
 #user-input {
     flex: 1;
     padding: 12px 16px;
@@ -109,3 +133,5 @@ body {
         padding: 8px 16px; /* Smaller padding for send button */
     }
 }
+
+
