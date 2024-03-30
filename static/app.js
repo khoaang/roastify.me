@@ -10,6 +10,7 @@ function scrollToBottom() {
 async function sendMessage() {
   var userInput = document.getElementById("user-input");
   var message = userInput.value;
+  userInput.value = "";
   // append user message
   var userMessage = document.createElement("div");
   userMessage.className = "message user-message";
@@ -31,7 +32,6 @@ async function sendMessage() {
   serverMessage.innerHTML = data.response;
   document.getElementById("chat-messages").appendChild(serverMessage);
   scrollToBottom();
-  userInput.value = "";
 }
 
 // Event listener for send button click
