@@ -20,18 +20,17 @@ REDIRECT_URI = os.getenv('REDIRECT_URI')
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
-track_names = []
-
 
 def filter_json(json_data):
-    global track_names
+    session['track_names'] = []
     filtered_data = {}
     # Add only necessary fields to the new dictionary
     filtered_data['items'] = []
     for item in json_data['items']:
         if 'name' not in item:
             filtered_item = {}
-            track_names.append((item['track']['name'], item['track']['id']))
+            session['track_names'].append(
+                (item['track']['name'], item['track']['id']))
             filtered_item['name'] = item['track']['name']
             filtered_item['artists'] = ", ".join(
                 [artist['name'] for artist in item['track']['artists']])
@@ -40,7 +39,7 @@ def filter_json(json_data):
             continue
         filtered_item = {}
         filtered_item['name'] = item['name']
-        track_names.append((item['name'], item['id']))
+        session['track_names'].append((item['name'], item['id']))
         filtered_item['artists'] = ", ".join(
             [artist['name'] for artist in item['artists']])
         filtered_item['popularity'] = item['popularity']
@@ -83,12 +82,10 @@ def fetch_user_data():
     return user_data
 
 
-init_user_data = None
-
-
 @app.route('/')
 def index():
     session.pop('previous_messages', None)
+    session.pop('init_user_data', None)
     if 'access_token' in session:
         return render_template('chat.html')
     return render_template('index.html')
@@ -129,9 +126,9 @@ def callback():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    global init_user_data
-    if init_user_data is None:
-        init_user_data = fetch_user_data()
+
+    if session.get('init_user_data') is None:
+        session['init_user_data'] = fetch_user_data()
     message = request.json.get('message')
 
     # Get the previous messages from the session
@@ -139,7 +136,7 @@ def send_message():
 
     # Add the new user message to the previous messages
     previous_messages.append({"role": "user", "content": message})
-
+    init_user_data = session['init_user_data']
     # Generate a response
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -207,7 +204,7 @@ def identify_song_titles_and_artists(message):
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system",
-                "content": "You are a helpful assistant. What song titles and their artists are mentioned in this text? Be concise and clear, list the first song title and artists. Split by commas for songs, like 'Song by Artist, Song2 by Artist2' ignore features If there are no songs, just try you best."},
+                "content": "You are a helpful assistant. What song titles and their artists are mentioned in this text? Be concise and clear, list the first song title and artists. Split by commas for songs, like 'Song by Artist, Song2 by Artist2' ignore features If there are no songs, just try you best. be concise, not sentences"},
             {"role": "user", "content": message},
         ],
         max_tokens=100
