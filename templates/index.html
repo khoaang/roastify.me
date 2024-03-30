@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roastify</title>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='index.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="title-container">
+        <h1 class="title animate__animated animate__pulse animate__infinite">
+          roastify.me
+        </h1>
+        <img
+          class="message-box box1"
+          src="{{ url_for('static', filename='SVG/m1.svg') }}"
+        />
+        <img
+          class="message-box box2"
+          src="{{ url_for('static', filename='SVG/m2.svg') }}"
+        />
+        <img
+          class="message-box box3"
+          src="{{ url_for('static', filename='SVG/m3.svg') }}"
+        />
+      </div>
+      <div id="description">
+        <div id="typed"></div>
+      </div>
+      <button
+        class="spotify-login-button"
+        onclick="window.location.href = '/login';"
+      >
+        Login to Spotify
+      </button>
+    </div>
+    <footer>
+      <p>Powered by GPT and Spotify</p>
+    </footer>
+    <script>
+      var descriptions = [
+        "your music taste probably (definitely) sucks",
+        "you are not indie. or special. or unique.",
+        "'i listen to everything' - you, probably",
+        "stop posting your spotify wrapped on instagram",
+        "your 12 followers don't care about your music taste",
+        "you probably listen to the same 5 songs on repeat",
+        "what even is a 'vibe' playlist?",
+        "dude you dont even like that song, you just like the beat",
+        "did you even listen to the lyrics?",
+        "anthony fantano would give your playlist a 3/10",
+        "nobody cares about your 'guilty pleasures' playlist",
+        "laufey is not a personality trait",
+        "id rather eat glass than listen to your playlist",
+        "did you even listen to the album?",
+        "'you probably haven't heard of them' - you, probably",
+        "they definitely have heard of them",
+        "why are you still listening to the same music from high school?",
+        "so you're a 'music enthusiast' but you only listen to the top 40?",
+        "zodiac signs are not a valid reason to like a song",
+        // Add more descriptions here...
+      ];
+
+      var options = {
+        strings: descriptions,
+        typeSpeed: 50, // Speed in milliseconds
+        backSpeed: 50, // Backspace speed in milliseconds
+        loop: true, // Loop the strings
+        backDelay: 2000, // Pause before backspacing
+        startDelay: 1000, // Delay before typing starts
+      };
+
+      var typed = new Typed("#typed", options);
+    </script>
+  </body>
+</html>

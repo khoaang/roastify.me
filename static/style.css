@@ -1,0 +1,80 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Sleek font */
+    background-color: #121212; /* Spotify's dark background */
+    color: #ffffff; /* White text for contrast */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 90vh; /* Using viewport height for a more responsive design */
+    max-width: 800px; /* Adjusted for a slightly wider container */
+    margin: 5vh auto; /* Centering with top and bottom margin for breathing space */
+    padding: 20px;
+    background-color: #181818; /* Slightly lighter dark shade for container */
+    border-radius: 10px; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Softer shadow for depth */
+}
+
+#chat-messages {
+    max-height: 80vh; /* Responsive height */
+    overflow-y: auto; /* Ensures scrollability */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adds space between messages without using margin */
+}
+
+.message {
+    max-width: 60%; /* Allows messages to take up more space */
+    word-wrap: break-word; /* Prevents overflow from long words */
+    padding: 12px 16px; /* Adjusted padding for better text readability */
+    border-radius: 20px; /* More pronounced rounded corners */
+    background-color: #222222; /* Dark shade for message backgrounds */
+    color: #ccc; /* Lighter text color for readability */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #1DB954; /* Spotify green for user messages */
+    color: #fff; /* White text for contrast */
+}
+
+.server-message {
+    align-self: flex-start;
+    background-color: #535353; /* Slightly lighter grey for server messages */
+}
+
+#chat-input {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; /* Adds space between chat messages and input area */
+}
+
+#user-input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 30px; /* More pronounced rounded corners for the input */
+    border: 2px solid #333; /* Darker border for better integration */
+    background-color: #181818; /* Matching the chat container background */
+    color: #ddd; /* Lighter color for input text */
+}
+
+#send-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border-radius: 30px; /* Matching the input's rounded corners */
+    background-color: #1DB954; /* Spotify green for the send button */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out; /* Smooth transition for hover effect */
+}
+
+#send-button:hover {
+    background-color: #1aa34a; /* Slightly darker green on hover */
+}
