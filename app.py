@@ -1,8 +1,5 @@
-from spotipy.oauth2 import SpotifyOAuth
-import spotipy
 from flask import Flask, redirect, request, session, url_for, render_template, jsonify
 import requests
-import openai
 from openai import OpenAI
 import os
 import json
