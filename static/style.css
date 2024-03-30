@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 90vh; /* Using viewport height for a more responsive design */
+    height: 80vh; /* Using viewport height for a more responsive design */
     max-width: 800px; /* Adjusted for a slightly wider container */
     margin: 5vh auto; /* Centering with top and bottom margin for breathing space */
     padding: 20px;
