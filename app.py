@@ -182,7 +182,7 @@ def get_song_embed():
     artist = artist.strip()
 
     # Check if the song title is in track_names
-    for track in track_names:
+    for track in session['track_names']:
         if track[0].lower() == song_title.lower():
             return jsonify({'song_embed_url': f'https://open.spotify.com/embed/track/{track[1]}'})
 

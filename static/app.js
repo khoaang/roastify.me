@@ -12,6 +12,10 @@ document.getElementById("user-input").addEventListener("click", function () {
   typed.stop();
   document.getElementById("user-input").value = "";
 });
+document.getElementById("user-input").addEventListener("focus", function () {
+  typed.stop();
+  document.getElementById("user-input").value = "";
+});
 // Assuming you have a reference to your chat messages container
 var chatMessages = document.getElementById("chat-messages");
 
