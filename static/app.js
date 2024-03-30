@@ -31,6 +31,7 @@ async function sendMessage() {
   serverMessage.innerHTML = data.response;
   document.getElementById("chat-messages").appendChild(serverMessage);
   scrollToBottom();
+  userInput.value = "";
 }
 
 // Event listener for send button click
