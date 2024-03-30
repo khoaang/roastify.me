@@ -64,6 +64,7 @@ def fetch_user_data():
     for time_range in time_ranges:
         top_tracks_response = requests.get(
             f'https://api.spotify.com/v1/me/top/tracks?limit=20&time_range={time_range}', headers=headers)
+        print(top_tracks_response.text)
         top_tracks[time_range] = filter_json(top_tracks_response.json())
 
     # Fetch user's recently played tracks
