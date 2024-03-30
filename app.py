@@ -12,7 +12,7 @@ client = OpenAI()
 # Spotify OAuth settings
 CLIENT_ID = 'ccb7c5e0b3404e7d9e647351dc7e73da'
 CLIENT_SECRET = 'bca706a8befd428ca2efcdea35617161'
-REDIRECT_URI = 'https://roastify-e5f31d0b56b2.herokuapp.com/callback'
+REDIRECT_URI = 'https://roastify.me/callback'
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
